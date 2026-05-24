@@ -1,0 +1,110 @@
+[versions]
+agp = "8.5.2"
+kotlin = "2.0.21"
+coreKtx = "1.10.1"
+ktor = "3.0.1"
+android-compileSdk = "35"
+android-minSdk = "24"
+android-targetSdk = "35"
+
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+activityCompose = "1.9.3"
+composeBom = "2024.10.00"
+androidxNav = "2.8.1"
+androidMaterial = "1.11.0"
+androidMaterialCompose = "1.6.0"
+androidxDataStore = "1.1.1"
+pager = "0.24.13-rc"
+systemuicontroller = "0.32.0"
+lottieVersion = "6.1.0"
+calenderComposeVersion = "2.6.1"
+kotlinxDatetime = "0.6.1"
+googleServices = "4.4.2"
+googleCrashlytics = "3.0.2"
+firebaseCrashlytics = "19.1.0"
+firebaseAnalytics = "22.1.0"
+coreSplashScreen = "1.0.1"
+playCore = "2.1.0"
+reviewktx = "2.0.2"
+
+#hilt
+hilt = "2.51.1"
+hiltCompiler = "1.1.0"
+hiltNavigationCompose = "1.0.0"
+
+#lifecycle = "2.6.2"
+room = "2.7.0-alpha07"
+sqlite = "2.5.0-alpha07"
+koin = "4.0.0"
+koinCompose = "4.0.0"
+navigationComposeVersion = "2.7.0-alpha07"
+workManager = "2.9.0"
+core-testing = "2.2.0"
+appcompat = "1.7.0"
+activity = "1.9.0"
+constraintlayout = "2.1.4"
+androidx-lifecycle = "2.8.4"
+ksp = "2.0.21-1.0.25"
+
+#moshi
+moshi = "1.12.0"
+kotlinxSerialization = "1.7.1"
+kotlinxCoroutines = "1.8.0"
+compose-multiplatform = "1.6.11"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNav" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+androidx-room-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "core-testing" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+google-hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+androidx-hiltCompiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose"}
+workManager = { module = "androidx.work:work-runtime-ktx", version.ref = "workManager"}
+hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltCompiler" }
+androidx-datastorePref = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDataStore" }
+squareup-moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi"}
+squareup-moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi"}
+squareup-moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi"}
+accompanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "pager"}
+system-controller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "systemuicontroller" }
+calender-compose = { group = "com.kizitonwose.calendar", name = "compose-multiplatform", version.ref = "calenderComposeVersion" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+android-splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashScreen" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+play-app-update = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playCore"}
+play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "reviewktx" }
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koinCompose" }
+koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koinCompose" }
+koin-workmanager = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koin" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleCrashlytics" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "room" }

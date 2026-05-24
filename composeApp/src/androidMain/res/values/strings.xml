@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TodoMaster</string>
+    <string name="select_task">Select Task</string>
+    <string name="time">Time</string>
+    <string name="tasks">Tasks</string>
+    <string name="focusing">Focusing</string>
+    <string name="pomodoro">Pomodoro</string>
+    <string name="add_task_message">Ready to begin? Please add a task.</string>
+</resources>
