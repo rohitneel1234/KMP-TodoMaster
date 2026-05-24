@@ -7,4 +7,14 @@
     <string name="focusing">Focusing</string>
     <string name="pomodoro">Pomodoro</string>
     <string name="add_task_message">Ready to begin? Please add a task.</string>
+    <string name="market_string">market://details?id=com.rohitneel.todomaster</string>
+    <string name="market_developer_string">market://search?q=pub:Rohit+Neel</string>
+    <string name="pm_format">pm</string>
+    <string name="set_time">Set Time</string>
+    <string name="clear">Clear</string>
+    <string name="repeat">Repeat</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="custom_repeat_interval">Custom Repeat Interval</string>
+    <string name="voice_not_supported">Voice not supported</string>
 </resources>

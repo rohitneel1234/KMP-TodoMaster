@@ -40,6 +40,9 @@ class PomodoroService : Service() {
 	var duration: Duration = 5.minutes
 		private set
 
+	private val _remainingTimeSeconds = MutableStateFlow(duration.inWholeSeconds)
+	val remainingTimeSeconds: StateFlow<Long> get() = _remainingTimeSeconds
+
 	private val _hours = MutableStateFlow(0)
 	val hours: StateFlow<Int> get() = _hours
 
@@ -147,6 +150,7 @@ class PomodoroService : Service() {
 	}
 
 	private fun updateTimeUnits() {
+		_remainingTimeSeconds.value = duration.inWholeSeconds
 		_hours.value = (duration.inWholeHours.toInt())
 		_minutes.value = ((duration.inWholeMinutes % 60).toInt())
 		_seconds.value = ((duration.inWholeSeconds % 60).toInt())
@@ -158,6 +162,7 @@ class PomodoroService : Service() {
 		timer = fixedRateTimer(initialDelay = 1000L, period = 1000L) {
 			if (duration.inWholeSeconds > 0) {
 				duration = duration.minus(1.seconds)
+				_remainingTimeSeconds.value = duration.inWholeSeconds
 				updateTimeUnits()
 				updateNotification(
 					_hours.value.toString().padStart(2, '0'),

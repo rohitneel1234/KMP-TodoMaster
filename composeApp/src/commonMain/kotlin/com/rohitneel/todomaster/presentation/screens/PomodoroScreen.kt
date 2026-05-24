@@ -87,8 +87,9 @@ import com.rohitneel.todomaster.presentation.theme.Clarendon
 import com.rohitneel.todomaster.presentation.viewmodel.PomodoroViewModel
 import com.rohitneel.todomaster.presentation.viewmodel.SettingViewModel
 import com.rohitneel.todomaster.presentation.viewmodel.TaskViewModel
-import com.rohitneel.todomaster.util.AppConstants.TimeDurations
-import com.rohitneel.todomaster.util.AppConstants.TimeUnits
+import com.rohitneel.todomaster.util.platform.LocalPomodoroPlatformActions
+import com.rohitneel.todomaster.util.AppConstants
+import com.rohitneel.todomaster.util.Utils
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -111,16 +112,13 @@ fun PomodoroScreen(
     navController: NavController,
     taskViewModel: TaskViewModel,
     pomodoroViewModel: PomodoroViewModel,
-    settingViewModel: SettingViewModel,
-    onStartService: () -> Unit = {},
-    onStopService: () -> Unit = {},
-    onCancelService: () -> Unit = {},
-    onVibrate: () -> Unit = {},
-    hours: Int,
-    minutes: Int,
-    seconds: Int,
-    currentTimerState: String // Simplified timer state for commonMain
+    settingViewModel: SettingViewModel
 ) {
+    val platformActions = LocalPomodoroPlatformActions.current
+    val hours by pomodoroViewModel.hours.collectAsState()
+    val minutes by pomodoroViewModel.minutes.collectAsState()
+    val seconds by pomodoroViewModel.seconds.collectAsState()
+    val currentTimerState by pomodoroViewModel.timerState.collectAsState()
     val tasks = taskViewModel.tasks.collectAsState(initial = emptyList())
     val categoryColors by taskViewModel.categoryColors.collectAsState(initial = emptyMap())
     val activeTasks = tasks.value.filter { !it.isCompleted }
@@ -138,14 +136,14 @@ fun PomodoroScreen(
     var selectedTime by remember { mutableLongStateOf(300L) } // Default 5 mins
     val timeOptions = remember {
         listOf(
-            3600L to "${TimeDurations.ONE_HOUR} ${TimeUnits.HOUR}",
-            2700L to "${TimeDurations.FORTY_FIVE_MINUTES} ${TimeUnits.MINUTES}",
-            1800L to "${TimeDurations.THIRTY_MINUTES} ${TimeUnits.MINUTES}",
-            1500L to "${TimeDurations.TWENTY_FIVE_MINUTES} ${TimeUnits.MINUTES}",
-            1200L to "${TimeDurations.TWENTY_MINUTES} ${TimeUnits.MINUTES}",
-            900L to "${TimeDurations.FIFTEEN_MINUTES} ${TimeUnits.MINUTES}",
-            600L to "${TimeDurations.TEN_MINUTES} ${TimeUnits.MINUTES}",
-            300L to "${TimeDurations.FIVE_MINUTES} ${TimeUnits.MINUTES}"
+            3600L to "${AppConstants.TimeDurations.ONE_HOUR} ${AppConstants.TimeUnits.HOUR}",
+            2700L to "${AppConstants.TimeDurations.FORTY_FIVE_MINUTES} ${AppConstants.TimeUnits.MINUTES}",
+            1800L to "${AppConstants.TimeDurations.THIRTY_MINUTES} ${AppConstants.TimeUnits.MINUTES}",
+            1500L to "${AppConstants.TimeDurations.TWENTY_FIVE_MINUTES} ${AppConstants.TimeUnits.MINUTES}",
+            1200L to "${AppConstants.TimeDurations.TWENTY_MINUTES} ${AppConstants.TimeUnits.MINUTES}",
+            900L to "${AppConstants.TimeDurations.FIFTEEN_MINUTES} ${AppConstants.TimeUnits.MINUTES}",
+            600L to "${AppConstants.TimeDurations.TEN_MINUTES} ${AppConstants.TimeUnits.MINUTES}",
+            300L to "${AppConstants.TimeDurations.FIVE_MINUTES} ${AppConstants.TimeUnits.MINUTES}"
         )
     }
 
@@ -188,14 +186,14 @@ fun PomodoroScreen(
 
     LaunchedEffect(isCompleted) {
         if (isCompleted) {
-            if (vibrateEnable) onVibrate()
+            if (vibrateEnable) platformActions.onVibrate()
             taskViewModel.resetTimer()
             selectedTask?.let { task ->
                 taskViewModel.onTaskUpdated(task, true)
                 selectedTitle = "Select Task"
                 selectedColor = Color.Gray
             }
-            onCancelService()
+            platformActions.onCancel()
             navController.navigate(NavDestinations.PomodoroComplete.route)
         }
     }
@@ -236,6 +234,7 @@ fun PomodoroScreen(
                         onTimeSelected = { time ->
                             selectedTime = time
                             pomodoroViewModel.setTimerDuration(time)
+                            platformActions.onSetDuration(time)
                             currentBottomSheet = null
                             scope.launch { sheetState.hide() }
                         }
@@ -416,10 +415,10 @@ fun PomodoroScreen(
                         } else {
                             if (currentTimerState == "STARTED") {
                                 taskViewModel.pauseTimer()
-                                onStopService()
+                                platformActions.onStop()
                             } else {
                                 taskViewModel.startTimer()
-                                onStartService()
+                                platformActions.onStart()
                             }
                         }
                     },
@@ -444,7 +443,7 @@ fun PomodoroScreen(
                                 selectedTitle = ""
                                 selectedColor = Color.Gray
                             }
-                            onCancelService()
+                            platformActions.onCancel()
                         },
                         shape = CircleShape,
                         elevation = FloatingActionButtonDefaults.elevation(4.dp),

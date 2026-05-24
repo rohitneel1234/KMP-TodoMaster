@@ -14,19 +14,22 @@ import android.os.IBinder
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.rohitneel.todomaster.presentation.service.PomodoroService
 import com.rohitneel.todomaster.presentation.viewmodel.PomodoroViewModel
 import com.rohitneel.todomaster.presentation.viewmodel.TaskViewModel
 import com.rohitneel.todomaster.util.AppConstants
+import com.rohitneel.todomaster.util.androidContext
+import com.rohitneel.todomaster.util.platform.PomodoroPlatformActions
+import com.rohitneel.todomaster.util.platform.LocalPomodoroPlatformActions
 import com.rohitneel.todomaster.util.rememberWindowSize
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val taskViewModel: TaskViewModel by viewModel()
     private val pomodoroViewModel: PomodoroViewModel by viewModel()
@@ -49,6 +52,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        androidContext = this
         installSplashScreen().setKeepOnScreenCondition { taskViewModel.isLoading.value }
         enableEdgeToEdge()
 
@@ -56,28 +60,33 @@ class MainActivity : ComponentActivity() {
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
         setContent {
-            val pomodoroHours by pomodoroService?.hours?.collectAsState(0) ?: remember { mutableStateOf(0) }
-            val pomodoroMinutes by pomodoroService?.minutes?.collectAsState(0) ?: remember { mutableStateOf(0) }
-            val pomodoroSeconds by pomodoroService?.seconds?.collectAsState(0) ?: remember { mutableStateOf(0) }
-            val pomodoroTimerState by pomodoroService?.currentTimerState ?: remember { mutableStateOf(com.rohitneel.todomaster.presentation.service.TimerState.IDLE) }
+            val pomodoroRemainingTime by pomodoroService?.remainingTimeSeconds?.collectAsState(0L) ?: remember { mutableStateOf(0L) }
+            val pomodoroTimerStateObj = pomodoroService?.currentTimerState ?: remember { mutableStateOf(com.rohitneel.todomaster.presentation.service.TimerState.IDLE) }
 
             // Sync ViewModel with platform service
-            LaunchedEffect(pomodoroHours, pomodoroMinutes, pomodoroSeconds) {
-                val totalSeconds = (pomodoroHours * 3600) + (pomodoroMinutes * 60) + pomodoroSeconds
-                pomodoroViewModel.updateProgressFromPlatform(totalSeconds.toLong())
+            LaunchedEffect(pomodoroRemainingTime, pomodoroTimerStateObj.value) {
+                pomodoroViewModel.updateTimerState(pomodoroTimerStateObj.value.name)
+                // Only update progress if timer is actually running or just finished
+                if (pomodoroTimerStateObj.value == com.rohitneel.todomaster.presentation.service.TimerState.STARTED || pomodoroRemainingTime == 0L) {
+                    pomodoroViewModel.updateProgressFromPlatform(pomodoroRemainingTime)
+                }
             }
 
-            App(
-                windowSize = rememberWindowSize(),
-                onVibrate = { vibrateDevice() },
-                onStartPomodoro = { triggerPomodoroService(AppConstants.PomodoroConstants.ACTION_SERVICE_START) },
-                onStopPomodoro = { triggerPomodoroService(AppConstants.PomodoroConstants.ACTION_SERVICE_STOP) },
-                onCancelPomodoro = { triggerPomodoroService(AppConstants.PomodoroConstants.ACTION_SERVICE_CANCEL) },
-                pomodoroHours = pomodoroHours,
-                pomodoroMinutes = pomodoroMinutes,
-                pomodoroSeconds = pomodoroSeconds,
-                pomodoroTimerState = pomodoroTimerState.name
-            )
+            val platformActions = remember(pomodoroService) {
+                object : PomodoroPlatformActions {
+                    override fun onStart() = triggerPomodoroService(AppConstants.PomodoroConstants.ACTION_SERVICE_START)
+                    override fun onStop() = triggerPomodoroService(AppConstants.PomodoroConstants.ACTION_SERVICE_STOP)
+                    override fun onCancel() = triggerPomodoroService(AppConstants.PomodoroConstants.ACTION_SERVICE_CANCEL)
+                    override fun onSetDuration(durationInSeconds: Long) { pomodoroService?.setTimerDuration(durationInSeconds) }
+                    override fun onVibrate() = vibrateDevice()
+                }
+            }
+
+            CompositionLocalProvider(LocalPomodoroPlatformActions provides platformActions) {
+                App(
+                    windowSize = rememberWindowSize(),
+                )
+            }
 
             val context = this
             LaunchedEffect(Unit) {

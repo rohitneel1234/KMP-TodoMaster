@@ -631,7 +631,3 @@ fun ShowCategoryDialog(
         }
     }
 }
-
-@Composable
-fun RequestPermission() {
-}

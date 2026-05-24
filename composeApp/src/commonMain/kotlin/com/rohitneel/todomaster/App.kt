@@ -28,22 +28,37 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.rohitneel.todomaster.presentation.navigation.*
+import com.rohitneel.todomaster.presentation.navigation.BottomNavItem
+import com.rohitneel.todomaster.presentation.navigation.NavDestinations
+import com.rohitneel.todomaster.presentation.navigation.NavDrawerBody
+import com.rohitneel.todomaster.presentation.navigation.NavDrawerHeader
+import com.rohitneel.todomaster.presentation.navigation.NavDrawerItem
 import com.rohitneel.todomaster.presentation.onboarding.OnboardingScreen
-import com.rohitneel.todomaster.presentation.screens.*
+import com.rohitneel.todomaster.presentation.screens.AddTaskScreen
+import com.rohitneel.todomaster.presentation.screens.CalenderScreen
+import com.rohitneel.todomaster.presentation.screens.FAQScreen
+import com.rohitneel.todomaster.presentation.screens.FavoritesScreen
+import com.rohitneel.todomaster.presentation.screens.ModifyCategoriesScreen
+import com.rohitneel.todomaster.presentation.screens.OverviewScreen
+import com.rohitneel.todomaster.presentation.screens.PomodoroComplete
+import com.rohitneel.todomaster.presentation.screens.PomodoroScreen
+import com.rohitneel.todomaster.presentation.screens.PrivacyPolicyScreen
+import com.rohitneel.todomaster.presentation.screens.ReminderScreen
+import com.rohitneel.todomaster.presentation.screens.SettingScreen
+import com.rohitneel.todomaster.presentation.screens.TaskDetailScreen
+import com.rohitneel.todomaster.presentation.screens.ThemeScreen
+import com.rohitneel.todomaster.presentation.screens.TrashScreen
 import com.rohitneel.todomaster.presentation.theme.TodoMasterTheme
+import com.rohitneel.todomaster.presentation.viewmodel.PomodoroViewModel
 import com.rohitneel.todomaster.presentation.viewmodel.SettingViewModel
 import com.rohitneel.todomaster.presentation.viewmodel.TaskViewModel
-import com.rohitneel.todomaster.presentation.viewmodel.PomodoroViewModel
 import com.rohitneel.todomaster.util.WindowSize
-import com.rohitneel.todomaster.util.WindowType
 import com.rohitneel.todomaster.util.rememberWindowSize
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -54,15 +69,7 @@ import todomaster.composeapp.generated.resources.*
 
 @Composable
 fun App(
-    windowSize: WindowSize = rememberWindowSize(),
-    onVibrate: () -> Unit = {},
-    onStartPomodoro: () -> Unit = {},
-    onStopPomodoro: () -> Unit = {},
-    onCancelPomodoro: () -> Unit = {},
-    pomodoroHours: Int = 0,
-    pomodoroMinutes: Int = 0,
-    pomodoroSeconds: Int = 0,
-    pomodoroTimerState: String = "IDLE"
+    windowSize: WindowSize = rememberWindowSize()
 ) {
     TodoMasterTheme {
         KoinContext {
@@ -315,15 +322,7 @@ fun App(
                                 navController = navController,
                                 taskViewModel = taskViewModel,
                                 pomodoroViewModel = pomodoroViewModel,
-                                settingViewModel = settingViewModel,
-                                onStartService = onStartPomodoro,
-                                onStopService = onStopPomodoro,
-                                onCancelService = onCancelPomodoro,
-                                onVibrate = onVibrate,
-                                hours = pomodoroHours,
-                                minutes = pomodoroMinutes,
-                                seconds = pomodoroSeconds,
-                                currentTimerState = pomodoroTimerState
+                                settingViewModel = settingViewModel
                             )
                         }
                         composable(route = NavDestinations.PomodoroComplete.route) {

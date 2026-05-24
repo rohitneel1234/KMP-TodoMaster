@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.TodoMasterTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/light_primary</item>
+        <item name="background">@color/light_primary</item>
+        <item name="colorSecondary">@color/light_primary</item>
+        <item name="colorPrimaryContainer">@color/light_container</item>
+        <item name="colorTertiaryContainer">@color/light_container</item>
+        <item name="colorSecondaryContainer">@color/light_container</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.TodoMasterTheme</item>
+    </style>
+</resources>

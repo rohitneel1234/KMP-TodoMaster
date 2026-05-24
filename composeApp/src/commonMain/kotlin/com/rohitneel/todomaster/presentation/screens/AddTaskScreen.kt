@@ -73,6 +73,7 @@ import com.rohitneel.todomaster.presentation.events.TaskEvent
 import com.rohitneel.todomaster.presentation.theme.*
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import org.jetbrains.compose.resources.Font
 import com.rohitneel.todomaster.presentation.viewmodel.SettingViewModel
 import com.rohitneel.todomaster.presentation.viewmodel.TaskViewModel
@@ -99,6 +100,8 @@ fun AddTaskScreen(
     taskId: String,
     onEditTask: MutableState<Boolean>,
 ) {
+    val settingViewModel: SettingViewModel = koinViewModel()
+    val snoozeDuration by settingViewModel.snoozeDuration.collectAsState()
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -137,7 +140,13 @@ fun AddTaskScreen(
         textDecoration = if (taskViewModel.fontStyleModel.isUnderlined) TextDecoration.Underline else TextDecoration.None
     )
     var toggleUpperCase by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
     val titleFieldFocused = remember { mutableStateOf(false) }
+    var voiceInput by remember { mutableStateOf("") }
+    
+    val voiceLauncher = Utils.voiceRecognizerLauncher { result ->
+        voiceInput = result
+    }
     
     LaunchedEffect(onEditTask.value) {
         if (onEditTask.value) {
@@ -181,6 +190,12 @@ fun AddTaskScreen(
                     )
                 }
             }
+        }
+    }
+
+    LaunchedEffect(sheetState.isVisible) {
+        if (sheetState.isVisible) {
+            keyboardController?.hide()
         }
     }
 
@@ -272,7 +287,7 @@ fun AddTaskScreen(
                             }
                         ) {
                             Icon(
-                                painter = painterResource(Res.drawable.ic_reminder),
+                                painter = painterResource(Res.drawable.outline_color_lens_32),
                                 contentDescription = "colors"
                             )
                         }
@@ -285,7 +300,7 @@ fun AddTaskScreen(
                             }
                         ) {
                             Icon(
-                                painter = painterResource(Res.drawable.ic_reminder),
+                                painter = painterResource(Res.drawable.sharp_match_case_36),
                                 contentDescription = "fonts",
                                 tint = if (titleFieldFocused.value) Color.Gray else MaterialTheme.colorScheme.onSurface
                             )
@@ -296,8 +311,18 @@ fun AddTaskScreen(
                             }
                         ) {
                             Icon(
-                                painter = painterResource(Res.drawable.ic_reminder),
+                                painter = painterResource(Res.drawable.outline_checkbox_32),
                                 contentDescription = "checkbox"
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                voiceLauncher()
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.baseline_mic_32),
+                                contentDescription = "voice input"
                             )
                         }
                     },
@@ -374,6 +399,9 @@ fun AddTaskScreen(
                     }
                 },
                 toggleUpperCase = toggleUpperCase,
+                voiceInput = voiceInput,
+                snackBarHostState = snackBarHostState,
+                snoozeDuration = snoozeDuration
             )
         }
     }
@@ -390,7 +418,11 @@ fun AddEditTaskContent(
     selectedTextStyle: TextStyle,
     onTitleFieldFocusChange: (Boolean) -> Unit,
     toggleUpperCase: Boolean,
+    voiceInput: String,
+    snackBarHostState: SnackbarHostState,
+    snoozeDuration: Long
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var expanded by rememberSaveable { mutableStateOf(false) }
     val categoryTypes by taskViewModel.categoryTypes.collectAsState(initial = emptyList())
     val selectedCategory by taskViewModel.selectedCategory
@@ -412,7 +444,12 @@ fun AddEditTaskContent(
         setReminder = taskViewModel.reminder != null
         setDueDate = taskViewModel.dueDate != null
     }
-    
+    LaunchedEffect(voiceInput) {
+        if (voiceInput.isNotBlank()) {
+            voiceInputText = voiceInput
+            taskViewModel.description = voiceInput
+        }
+    }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -427,7 +464,7 @@ fun AddEditTaskContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_reminder), // placeholder
+                    painter = painterResource(Res.drawable.ic_category),
                     contentDescription = "category",
                     modifier = Modifier.size(18.dp)
                 )
@@ -481,14 +518,23 @@ fun AddEditTaskContent(
                             interactionSource = interactionSource,
                             indication = null,
                             onClick = {
-                                // handleDateTimeClick
+                                Utils.handleDateTimeClick(
+                                    onEditTask = onEditTask,
+                                    isDueDate = true,
+                                    task = task,
+                                    snoozeDuration = snoozeDuration,
+                                    taskViewModel = taskViewModel,
+                                    snackBarHostState = snackBarHostState,
+                                    coroutineScope = coroutineScope,
+                                    workerTag = AppConstants.OVERDUE_WORK_MANAGER_TAG
+                                )
                             }
                         ),
                     contentDescription = "due date",
                     tint = if (onEditTask && setDueDate) taskViewModel.themeColor.value else MaterialTheme.colorScheme.onSurface
                 )
                 Icon(
-                    painter = painterResource(Res.drawable.ic_reminder),
+                    painter = painterResource(Res.drawable.ic_time),
                     modifier = Modifier
                         .padding(end = 10.dp)
                         .size(18.dp)
@@ -496,7 +542,16 @@ fun AddEditTaskContent(
                             interactionSource = interactionSource,
                             indication = null,
                             onClick = {
-                                // handleDateTimeClick
+                                Utils.handleDateTimeClick(
+                                    onEditTask = onEditTask,
+                                    isDueDate = false,
+                                    task = task,
+                                    snoozeDuration = snoozeDuration,
+                                    taskViewModel = taskViewModel,
+                                    snackBarHostState = snackBarHostState,
+                                    coroutineScope = coroutineScope,
+                                    workerTag = AppConstants.REMINDER_WORK_MANAGER_TAG
+                                )
                             }
                         ),
                     contentDescription = "reminder",
@@ -620,42 +675,48 @@ fun ColorSelectionBottomSheet(
             .padding(vertical = 20.dp, horizontal = 12.dp)
     ) {
         Text(
-            text = "Color",
+            text = "Pick Color",
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            TaskModel.taskColors.forEach { color ->
-                val colorInt = color.toArgb()
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .shadow(15.dp, CircleShape)
-                        .clip(CircleShape)
-                        .background(color)
-                        .border(
-                            width = 3.dp,
-                            color = if (taskViewModel.taskColor.value == colorInt && !taskViewModel.isGradientSelected.value) {
-                                Color.Black
-                            } else Color.Transparent,
-                            shape = CircleShape
-                        )
-                        .clickable {
-                            scope.launch {
-                                taskBackgroundAnimatable.animateTo(
-                                    targetValue = Color(colorInt),
-                                    animationSpec = tween(
-                                        durationMillis = 100
+            val boxWidth = maxWidth / TaskModel.taskColors.size
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                TaskModel.taskColors.forEach { color ->
+                    val colorInt = color.toArgb()
+                    Box(
+                        modifier = Modifier
+                            .size(boxWidth * 0.9f)
+                            .shadow(15.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(color)
+                            .border(
+                                width = 3.dp,
+                                color = if (taskViewModel.taskColor.value == colorInt && !taskViewModel.isGradientSelected.value) {
+                                    Color.Black
+                                } else Color.Transparent,
+                                shape = CircleShape
+                            )
+                            .clickable {
+                                scope.launch {
+                                    taskBackgroundAnimatable.animateTo(
+                                        targetValue = Color(colorInt),
+                                        animationSpec = tween(
+                                            durationMillis = 100
+                                        )
                                     )
-                                )
-                                taskViewModel.onEvent(TaskEvent.ChangeColor(colorInt))
+                                    taskViewModel.onEvent(TaskEvent.ChangeColor(colorInt))
+                                }
                             }
-                        }
-                )
+                    )
+                }
             }
         }
         Spacer(Modifier.height(20.dp))

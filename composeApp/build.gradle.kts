@@ -59,6 +59,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(compose.preview)
+            implementation(libs.material)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.koin.android)
