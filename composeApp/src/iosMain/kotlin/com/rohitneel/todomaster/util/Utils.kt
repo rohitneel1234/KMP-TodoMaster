@@ -7,8 +7,20 @@ import com.rohitneel.todomaster.data.model.TaskModel
 import com.rohitneel.todomaster.presentation.events.ChartEvent
 import com.rohitneel.todomaster.presentation.viewmodel.TaskViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlin.random.Random
 import kotlinx.datetime.Clock
+import platform.Foundation.timeIntervalSince1970
+import platform.UIKit.UIAlertAction
+import platform.UIKit.UIAlertActionStyleCancel
+import platform.UIKit.UIAlertActionStyleDefault
+import platform.UIKit.UIAlertController
+import platform.UIKit.UIAlertControllerStyleActionSheet
+import platform.UIKit.UIAlertControllerStyleAlert
+import platform.UIKit.UIApplication
+import platform.UIKit.UIDatePicker
+import platform.UIKit.UIDatePickerMode
+import platform.UIKit.UIDatePickerStyle
+import platform.UIKit.UIDevice
+import kotlin.random.Random
 
 actual object Utils {
     actual fun generateRandomColor(): Color {
@@ -80,14 +92,14 @@ actual object Utils {
         val alert = platform.UIKit.UIAlertController.alertControllerWithTitle(
             title = if (isDueDate) "Set Due Date" else "Set Reminder",
             message = "\n\n\n\n\n\n\n\n\n\n", // Space for date picker
-            preferredStyle = platform.UIKit.UIAlertControllerStyle.UIAlertControllerStyleActionSheet
+            preferredStyle = UIAlertControllerStyleActionSheet
         )
 
         alert.view.addSubview(datePicker)
 
         val okAction = platform.UIKit.UIAlertAction.actionWithTitle(
             title = "OK",
-            style = platform.UIKit.UIAlertActionStyle.UIAlertActionStyleDefault
+            style = UIAlertActionStyleDefault
         ) {
             val selectedDate = datePicker.date
             val timestamp = (selectedDate.timeIntervalSince1970 * 1000).toLong()
@@ -100,7 +112,7 @@ actual object Utils {
 
         val cancelAction = platform.UIKit.UIAlertAction.actionWithTitle(
             title = "Cancel",
-            style = platform.UIKit.UIAlertActionStyle.UIAlertActionStyleCancel,
+            style = UIAlertActionStyleCancel,
             handler = null
         )
 
@@ -119,9 +131,9 @@ actual object Utils {
             val alert = platform.UIKit.UIAlertController.alertControllerWithTitle(
                 title = "Voice Input",
                 message = "Voice recognition is not yet implemented for iOS.",
-                preferredStyle = platform.UIKit.UIAlertControllerStyle.UIAlertControllerStyleAlert
+                preferredStyle = UIAlertControllerStyleAlert
             )
-            alert.addAction(platform.UIKit.UIAlertAction.actionWithTitle("OK", platform.UIKit.UIAlertActionStyle.UIAlertActionStyleDefault, null))
+            alert.addAction(platform.UIKit.UIAlertAction.actionWithTitle("OK", UIAlertActionStyleDefault, null))
             platform.UIKit.UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(alert, true, null)
         }
     }

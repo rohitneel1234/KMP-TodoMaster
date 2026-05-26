@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx3072M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
 
 jobs:
   test:
@@ -29,7 +29,7 @@ jobs:
         with:
           name: test-reports
           path: "**/build/reports/tests/**"
-  # ...
+
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
         with:
           name: android-apk
           path: composeApp/build/outputs/apk/debug/*.apk
-  # ...
+
   build-ios:
     name: Build iOS simulator app
     runs-on: macos-latest
@@ -73,7 +73,7 @@ jobs:
           -sdk iphonesimulator \
           -derivedDataPath ./build \
           -verbose \
-          -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+          -destination 'generic/platform=iOS Simulator'
 
       - name: Upload app folder
         uses: actions/upload-artifact@v4
