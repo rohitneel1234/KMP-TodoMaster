@@ -5,6 +5,7 @@ import org.koin.dsl.KoinAppDeclaration
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
+        printLogger()
         appDeclaration()
         modules(
             platformModule(),
@@ -15,4 +16,4 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     }
 
 // called by iOS etc
-fun initKoin() = initKoin {}
+fun doInitKoin() = initKoin {}

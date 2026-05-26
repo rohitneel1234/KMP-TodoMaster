@@ -52,7 +52,7 @@ ksp = "2.0.21-1.0.25"
 moshi = "1.12.0"
 kotlinxSerialization = "1.7.1"
 kotlinxCoroutines = "1.8.0"
-compose-multiplatform = "1.6.11"
+compose-multiplatform = "1.7.3"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
