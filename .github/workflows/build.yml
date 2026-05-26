@@ -64,13 +64,6 @@ jobs:
       - name: Clean Gradle cache
         run: ./gradlew clean
 
-      - name: Build Kotlin framework for iOS
-        env:
-          PLATFORM_NAME: iphonesimulator
-          ARCHS: x86_64
-          IPHONEOS_DEPLOYMENT_TARGET: "13.0"
-        run: ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
-
       - name: Build iOS simulator app
         run: |
           xcodebuild build \
@@ -79,7 +72,8 @@ jobs:
           -scheme iosApp \
           -sdk iphonesimulator \
           -derivedDataPath ./build \
-          -verbose
+          -verbose \
+          -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
 
       - name: Upload app folder
         uses: actions/upload-artifact@v4
