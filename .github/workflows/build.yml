@@ -61,6 +61,9 @@ jobs:
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
 
+      - name: Clean Gradle cache
+        run: ./gradlew clean
+
       - name: Build Kotlin framework for iOS
         env:
           PLATFORM_NAME: iphonesimulator

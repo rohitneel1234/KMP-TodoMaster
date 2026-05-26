@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 
@@ -72,6 +73,15 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    generateResClass = auto
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 android {
