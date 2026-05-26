@@ -73,7 +73,7 @@ jobs:
           -sdk iphonesimulator \
           -derivedDataPath ./build \
           -verbose \
-          -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=latest'
+          -destination 'generic/platform=iOS Simulator'
 
       - name: Upload app folder
         uses: actions/upload-artifact@v4
