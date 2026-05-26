@@ -62,6 +62,10 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Build Kotlin framework for iOS
+        env:
+          PLATFORM_NAME: iphonesimulator
+          ARCHS: x86_64
+          IPHONEOS_DEPLOYMENT_TARGET: "13.0"
         run: ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
 
       - name: Build iOS simulator app
