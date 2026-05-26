@@ -75,7 +75,7 @@ kotlin {
 
 compose.resources {
     publicResClass = true
-    packageOfResClass = "com.example.todomaster.resources"
+    packageOfResClass = "todomaster.composeapp.generated.resources"
     generateResClass = auto
 }
 
