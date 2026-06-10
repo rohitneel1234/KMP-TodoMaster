@@ -64,7 +64,9 @@ actual fun OverviewBarChart(
     val labelColor = MaterialTheme.colorScheme.onSurface
     
     val skiaFont = remember {
-        Font(Typeface.makeFromName("Arial", org.jetbrains.skia.FontStyle.BOLD), 12f)
+        Font().apply {
+            size = 12f
+        }
     }
     val skiaPaint = remember {
         Paint().apply {

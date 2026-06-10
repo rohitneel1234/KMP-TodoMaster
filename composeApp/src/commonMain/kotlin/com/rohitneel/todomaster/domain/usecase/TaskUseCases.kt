@@ -4,10 +4,11 @@ import com.rohitneel.todomaster.data.model.InvalidTaskException
 import com.rohitneel.todomaster.data.model.TaskModel
 import com.rohitneel.todomaster.data.repository.TaskRepository
 import com.rohitneel.todomaster.domain.model.SortOrder
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 
 class InsertTask(private val repository: TaskRepository) {
-    @Throws(InvalidTaskException::class)
+    @Throws(InvalidTaskException::class, CancellationException::class)
     suspend operator fun invoke(task: TaskModel): Long {
         if (task.title.isEmpty()) {
             throw InvalidTaskException("The title can't be empty.")

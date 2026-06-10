@@ -7,8 +7,9 @@ import com.rohitneel.todomaster.util.AppConstants
 import platform.Foundation.*
 import okio.Path.Companion.toPath
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 fun createDataStore(): DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(
-    producePath = {
+    produceFile = {
         val directory = NSFileManager.defaultManager.URLForDirectory(
             directory = NSDocumentDirectory,
             inDomain = NSUserDomainMask,
