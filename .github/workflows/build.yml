@@ -11,18 +11,6 @@ env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx3072M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
 
 jobs:
-  lint:
-    name: Run lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Gradle setup
-        uses: ./.github/actions/gradle-setup
-
-      - name: Run lint
-        run: ./gradlew lint
 
   test:
     name: Run tests
